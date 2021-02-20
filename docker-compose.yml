@@ -1,0 +1,24 @@
+version: "3"
+services:
+  docker-mysql:
+    image: mysql:5.7
+    container_name: docker-mysql
+    restart: always
+    # 明示的に stop がされない限り，終了ステータスに関係なく常に再起動が行われる
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      # ローカルの./mysql/dataをコンテナ上の/var/lib/mysql(MySQLのデータ)にマウントする
+      - ./mysql/log/:/var/log/mysql
+      # ローカルの./mysql/logをコンテナ上の/var/log/mysql(MySQLのログ)にマウントする
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # ローカルの./mysql/my.cnf(MySQLの設定ファイル)をコンテナ上の/etc/mysql/conf.d/my.cnfにマウントする
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      # ローカルの./mysql/init(MySQLの初期データファイル)をコンテナ上の/docker-entrypoint-initdb.dにマウントする
+    ports:
+      - "127.0.0.1:33060:3306"
+      # ローカルの33060ポートとコンテナの3306ポートをマッピングする
+      # ただし，ローカルの33060ポートには127.0.0.1からしかアクセスできない
+    environment:
+      MYSQL_ROOT_PASSWORD: password # root password
+      MYSQL_USER: user # username
+      MYSQL_PASSWORD: password # password
